@@ -1,10 +1,10 @@
 import shutil
 import tempfile
 
-from django.test import Client, TestCase, override_settings
-from django.urls import reverse
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
 
 from ..forms import CommentForm, PostForm
 from ..models import Comment, Group, Post, User
@@ -40,7 +40,6 @@ class PostCreateFormTests(TestCase):
             author=cls.user,
             text='Тестовый пост 1',
             group=cls.group,
-            #image=cls.uploaded
         )
         cls.form = PostForm()
 
@@ -68,8 +67,6 @@ class PostCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-
-        #print(Post.objects.all().values())
         self.assertRedirects(
             response,
             reverse(
@@ -131,7 +128,7 @@ class CommentCreateFormTests(TestCase):
 
     def test_create_comment(self):
         """Проверка создания нового комментария в БД"""
-        comments_count = Post.objects.get(id=self.post.id).comments.all().count()
+        com_count = Post.objects.get(id=self.post.id).comments.all().count()
         form_data = {
             'text': 'тестовый комментарий',
         }
@@ -142,7 +139,7 @@ class CommentCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        self.assertEqual(Comment.objects.count(), comments_count + 1)
+        self.assertEqual(Comment.objects.count(), com_count + 1)
         self.assertTrue(
             Comment.objects.filter(
                 post_id=self.post.id,
@@ -152,18 +149,13 @@ class CommentCreateFormTests(TestCase):
         )
 
     def test_anon_user_comment(self):
-        comments_count = Post.objects.get(id=self.post.id).comments.all().count()
+        com_count = Post.objects.get(id=self.post.id).comments.all().count()
         form_data = {
             'text': 'тестовый комментарий',
         }
-        form = CommentForm(form_data)
         self.guest_client.post(
             reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
             data=form_data,
             follow=True
         )
-        # print(Comment.objects.all().values())
-        self.assertEqual(Comment.objects.count(), comments_count)
-
-
-
+        self.assertEqual(Comment.objects.count(), com_count)

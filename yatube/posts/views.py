@@ -1,22 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import cache_page
-# from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.views.generic.edit import CreateView
-# from django.urls import reverse_lazy
 
 from .forms import CommentForm, PostForm
 from .models import Follow, Group, Post, User
 
 POST_LIMIT = 10
-
-
-# class PostCreateView(LoginRequiredMixin, CreateView):
-#     template_name = 'posts/create_post.html'
-#     model = Post
-#     form_class = PostForm
-#     success_url = reverse_lazy('posts:profile')
 
 
 def index(request):
@@ -50,7 +39,10 @@ def profile(request, username):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     if request.user.is_authenticated:
-        following = Follow.objects.filter(user=request.user, author=author).exists()
+        following = Follow.objects.filter(
+            user=request.user,
+            author=author
+        ).exists()
     else:
         following = False
     context = {
@@ -63,7 +55,7 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comments = post.comments.all()  # Comment.objects.filter(post=post)
+    comments = post.comments.all()
     form = CommentForm()
     context = {
         'post': post,

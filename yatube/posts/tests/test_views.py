@@ -89,7 +89,11 @@ class PostViewsTests(TestCase):
                         kwargs=arg_list[1]
                     )
                 )
-                self.assertTemplateUsed(response, arg_list[0], f'ашыпка в {response} {arg_list[0]}')
+                self.assertTemplateUsed(
+                    response,
+                    arg_list[0],
+                    f'ашыпка в {response} {arg_list[0]}'
+                )
 
     def test_post_index_page_context(self):
         """Проверка контекста общих страниц."""

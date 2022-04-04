@@ -1,5 +1,4 @@
 import os
-import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -114,5 +113,3 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-#if 'test' in sys.argv:
-#    CACHES['default'] = {'BACKEND': 'django.core.cache.backends.dummy.DummyCache',}
