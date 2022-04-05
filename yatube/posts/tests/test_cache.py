@@ -5,12 +5,6 @@ from django.urls import reverse
 
 from ..models import Group, Post, User
 
-TEST_CACHE_SETTING = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
-
 
 class CacheTests(TestCase):
 
@@ -28,9 +22,6 @@ class CacheTests(TestCase):
             text='Тестовый пост 1',
             group=cls.group,
         )
-        cls.views = {
-            'posts:index':
-                'posts/index.html'}
 
     def setUp(self):
         self.guest_client = Client()

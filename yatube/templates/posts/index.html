@@ -2,17 +2,19 @@
 {% load thumbnail %}
 {% load cache %}
 
-{% block title %} Последние обновления на сайте {% endblock %}
+{% block title %} {{ title }} {% endblock %}
 {% block content %}
   {% include 'posts/includes/switcher.html' %}
   <div class="container py-5">
-    <h1>{{ text }}</h1>
-    {% cache 20 index_page with page %}
+    <h1>{{ title }}</h1>
+    {% cache 20 index_page with page_obj %}
     {% for post in page_obj %}
       <article>
         <ul>
           <li>
-            Автор: {{ post.author.get_full_name }}
+            Автор: <a href="{% url 'posts:profile' post.author %}">
+              {{ post.author.get_full_name }}
+              {{ post.author }} </a>
           </li>
           <li>
             Дата публикации: {{ post.pub_date|date:"d E Y" }}
@@ -22,9 +24,14 @@
           <img class="card-img my-2" src="{{ im.url }}">
         {% endthumbnail %}
         <p>{{ post.text }}</p>
+        <ul style="list-style: none;">
+          <li><a href="{% url 'posts:post_detail' post.pk %}">подробная информация </a></li>
         {% if post.group %}
-          <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+          <li>
+            <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
+          </li>
         {% endif %}
+        </ul>
       </article>
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}

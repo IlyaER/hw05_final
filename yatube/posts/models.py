@@ -1,6 +1,7 @@
-from core.models import CreatedModel
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from core.models import CreatedModel
 
 User = get_user_model()
 
@@ -15,6 +16,10 @@ class Group(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
 
 class Post(models.Model):
@@ -72,6 +77,16 @@ class Comment(CreatedModel):
     )
     text = models.TextField()
 
+    def __str__(self):
+        return (f'Коммент {self.text[:30]} '
+                f'к "{self.post.text[:30]}" '
+                f'от {self.author.username}'
+                )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -94,3 +109,10 @@ class Follow(models.Model):
                 name='unique followers'
             )
         ]
+
+    def __str__(self):
+        return f'подписка {self.user.username} на {self.author.username}'
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'

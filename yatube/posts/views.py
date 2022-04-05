@@ -13,7 +13,9 @@ def index(request):
     paginator = Paginator(post_list, POST_LIMIT)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    title = 'Последние обновления на сайте'
     context = {
+        'title': title,
         'page_obj': page_obj,
     }
     return render(request, 'posts/index.html', context)
@@ -38,13 +40,12 @@ def profile(request, username):
     paginator = Paginator(post_list, POST_LIMIT)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(
+    following = request.user.is_authenticated and (
+        Follow.objects.filter(
             user=request.user,
             author=author
         ).exists()
-    else:
-        following = False
+    )
     context = {
         'following': following,
         'author': author,
@@ -114,14 +115,14 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    print(Follow.objects.filter(user=request.user))
-
     following = Follow.objects.filter(user=request.user)
     post_list = Post.objects.filter(author__following__user=request.user)
     paginator = Paginator(post_list, POST_LIMIT)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    title = 'Избранные авторы'
     context = {
+        'title': title,
         'following': following,
         'page_obj': page_obj,
     }
@@ -139,6 +140,7 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    if author != request.user:
-        Follow.objects.get(user=request.user, author=author).delete()
+    unfollow = Follow.objects.get(user=request.user, author=author)
+    if author != request.user and unfollow:
+        unfollow.delete()
     return redirect('posts:follow_index')

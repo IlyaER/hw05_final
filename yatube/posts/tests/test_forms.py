@@ -128,7 +128,7 @@ class CommentCreateFormTests(TestCase):
 
     def test_create_comment(self):
         """Проверка создания нового комментария в БД"""
-        com_count = Post.objects.get(id=self.post.id).comments.all().count()
+        com_count = self.post.comments.count()
         form_data = {
             'text': 'тестовый комментарий',
         }
@@ -149,7 +149,7 @@ class CommentCreateFormTests(TestCase):
         )
 
     def test_anon_user_comment(self):
-        com_count = Post.objects.get(id=self.post.id).comments.all().count()
+        com_count = self.post.comments.count()
         form_data = {
             'text': 'тестовый комментарий',
         }
